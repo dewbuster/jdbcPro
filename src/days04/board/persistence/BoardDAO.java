@@ -28,4 +28,9 @@ public interface BoardDAO {
 	int delete(long seq) throws SQLException;
 	// 5. 게시글 수정
 	int update(BoardDTO dto) throws SQLException;
+	// 6. 게시글 검색 - 페이징처리 X
+	ArrayList<BoardDTO> search(String searchCondition, String searchWord) throws SQLException;
+	// 6-2 게시글 검색 - 페이징처리 O
+	ArrayList<BoardDTO> search(String searchCondition, String searchWord, int currentPage, int numberPerPage) throws SQLException;
+	
 }

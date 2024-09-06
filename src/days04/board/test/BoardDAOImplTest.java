@@ -55,4 +55,19 @@ class BoardDAOImplTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	void testSearch() {
+		try {
+			//ArrayList<BoardDTO> list = this.dao.select();
+			//ArrayList<BoardDTO> list = this.dao.search("w", "홍길동1");
+			ArrayList<BoardDTO> list = this.dao.search("w", "홍길동1", 2, 5);
+			list.forEach(dto -> {
+				System.out.println(dto);
+			});
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

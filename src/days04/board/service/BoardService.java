@@ -9,7 +9,7 @@ import days04.board.persistence.BoardDAOImpl;
 
 // 트랜잭션 처리
 public class BoardService {
-	
+
 	private BoardDAO dao = null;
 	// 1. 생성자 DI
 	public BoardService(BoardDAO dao) {
@@ -19,7 +19,7 @@ public class BoardService {
 	public void setDao(BoardDAO dao) {
 		this.dao = dao;
 	}
-	
+
 	// 1. 게시글 목록 서비스
 	public ArrayList<BoardDTO> selectService(int currentPage, int numberPerPage){
 		ArrayList<BoardDTO> list = null;
@@ -48,7 +48,7 @@ public class BoardService {
 		}
 		return list;
 	}
-	
+
 	// 2. 새글 쓰기 서비스
 	public int insertService(BoardDTO dto) {
 		int rowCount = 0;
@@ -74,7 +74,7 @@ public class BoardService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return dto;
 	}
 	// 3. 삭제 서비스
@@ -89,7 +89,7 @@ public class BoardService {
 		System.out.println("> 게시글 삭제 : 로그 기록 작업...");
 		return rowCount;
 	}
-	
+
 	public int updateService(BoardDTO dto){
 		int rowCount = 0;
 		try {
@@ -101,5 +101,34 @@ public class BoardService {
 		System.out.println("> 게시글 업데이트 : 로그 기록 작업...");
 		return rowCount;
 	}
-	
+
+	// 5. 검색 서비스
+	public ArrayList<BoardDTO> searchService(String searchCondition, String searchWord, int currentPage, int numberPerPage){
+		ArrayList<BoardDTO> list = null;
+		// 1. DB 연동 list
+		try {
+			((BoardDAOImpl)this.dao).getConn().setAutoCommit(false);
+			list = this.dao.search(searchCondition, searchWord, currentPage, numberPerPage);
+			// 2. 로그 기록 작업
+			System.out.println("> 게시글 검색 : 로그 기록 작업...");
+			// 3. 문자/메일 전송
+			System.out.println("> 게시글 검색 : 문자/메일 전송 작업...");
+			((BoardDAOImpl)this.dao).getConn().commit();
+		} catch (SQLException e) {
+			try {
+				((BoardDAOImpl)this.dao).getConn().rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				((BoardDAOImpl)this.dao).getConn().setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
 }
